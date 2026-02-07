@@ -11,7 +11,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 // =======================
 // ENUMS
 // =======================
@@ -35,8 +34,29 @@ model User {
   role     Role    @default(CUSTOMER)
   isActive Boolean @default(true)
 
+  // Relations
+  profile       UserProfile?
   tailor        Tailor?
   refreshTokens RefreshToken[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// =======================
+// USER PROFILE
+// =======================
+
+model UserProfile {
+  id     String @id @default(uuid())
+  userId String @unique
+
+  fullName String
+  phone    String
+  address  String
+  dob      DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -47,13 +67,14 @@ model User {
 // =======================
 
 model Tailor {
-  id       String  @id @default(uuid())
-  userId   String  @unique
+  id     String @id @default(uuid())
+  userId String @unique
+
   shopName String
   location String
   isActive Boolean @default(true)
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -68,9 +89,8 @@ model RefreshToken {
   token     String   @unique
   userId    String
   expiresAt DateTime
-  revoked   Boolean  @default(false)
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 }

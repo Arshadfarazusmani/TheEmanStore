@@ -5,9 +5,9 @@ import { signAccessToken, signRefreshToken } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password, role } = await req.json();
+    const {  name,email, password,role } = await req.json();
 
-    if (!email || !password || !name) {
+    if (!email || !password || name) {
       return NextResponse.json(
         { message: "All feilds are required" },
         { status: 400 }
@@ -29,7 +29,8 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.create({
       data: {
-        name,
+
+       name,
         email,
         password: hashedPassword,
         role: role ?? "CUSTOMER",
